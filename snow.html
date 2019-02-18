@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>下雪啦！！！</title>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+<style>
+    *{
+        margin:0;
+        padding:0;
+    }
+    html{
+        overflow: hidden;
+    }
+    body{
+        background-color: #000;
+    }
+</style>
+<script>
+    var canvas  = document.getElementById("canvas");
+    var ctx = canvas.getContext('2d');
+    var W = window.innerWidth;
+    var H = window.innerHeight;
+    canvas.width = W;
+    canvas.height = H;
+    /*绘画*/
+    var circle = function(img,images){
+        ctx.drawImage(img,images.x,images.y,images.size,images.size);
+    }
+    /*存放图片的位置，大小，位移*/
+    var images = [];
+    var img=new Image();
+    img.src="http://blog.ewei.org/wp-content/uploads/2017/01/snow-2.png";
+    img.onload = function(){
+        ctx.clearRect(0,0,W,H);
+        for(var i=0;i<500;i++){
+            images[i] = {
+                x:Math.random()*W,
+                y:Math.random()*H,
+                size:Math.random()*30,
+                driftX:Math.random(),
+                driftY:Math.random()
+            }
+            circle(img,images[i]);
+        }
+        animation();
+    };
+    function animation(){
+        ctx.clearRect(0,0,W,H);
+        for(var i=0;i<500;i++){
+            images[i].x += images[i].driftX;
+            images[i].y += images[i].driftY;
+            circle(img,images[i]);
+            if(images[i].x>W || images[i].x<0){
+                images[i].y =  0;
+                images[i].x =  Math.random()*W;
+            };
+            if(images[i].y>H || images[i].y<0){
+                images[i].y =  0;
+                images[i].x =  Math.random()*W;
+            }; //判断是否超过屏幕 一旦超过就重新生成
+        }
+        window.requestAnimationFrame(animation)
+    };
+</script>
+</html>

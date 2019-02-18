@@ -1,0 +1,33 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  FONT-FAMILY: "微软雅黑", Tahoma, Arial, "宋体";
+  overflow: hidden;
+  color: #fff;
+}
+
+[v-clock] {
+  display: none;
+}
+
+.container {
+  background-image: url(../images/back.jpg);
+  background-size: 100% 100%;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+#canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>流星</title>
+        <style>
+          body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+          }
+        </style>
+</head>
+
+
+<body>
+  <div>
+    <canvas id="starCanvas"></canvas>
+  </div>
+</body>
+<script>
+  /*找到canvas元素*/
+  var starCanvas = document.getElementById("starCanvas");
+  /*创建 context 对象： getContext("2d")对象是内建的 HTML5 对象，拥有多种绘制路径、矩形、圆形、字符以及添加图像的方法。*/
+  var cxt = starCanvas.getContext("2d");
+  /*设置fillStyle属性可以是CSS颜色，渐变，或图案。fillStyle 默认设置是#000000（黑色）。fillRect(x,y,width,height) 方法定义了矩形当前的填充方式。*/
+  var W = window.innerWidth;
+  var H = window.innerHeight;
+  starCanvas.width = W;
+  starCanvas.height = H;
+  var focalLength = starCanvas.width * 2;
+  var centerX = starCanvas.width / 2;
+  var centerY = starCanvas.height / 2;
+  var starNum = 1000;
+  var stars = [];//保存每个点的X,Y,和随机的速度
+  var cicleRadius = 200;//圆形在半径
+  var draw = function () {
+    for (var i = 0; i < starNum; i++) {
+      var star = {
+        startX: Math.random() * W,
+        startY: Math.random() * H,
+        r: 2,
+        z: 0
+      }
+      star.endX = star.startX;
+      star.endY = star.startY;
+      // 保证每个点都在圆外
+      if (Math.abs(Math.sqrt(Math.pow(star.endX - centerX, 2) + Math.pow(star.endY - centerY, 2))) > cicleRadius) {
+        stars.push(star);
+        circleStar(star);
+      }
+    };
+  }
+  draw();
+
+
+  function starAnimation() {
+    cxt.clearRect(0, 0, W, H);
+    gradient(centerX, centerY, cicleRadius, []);
+    for (var i = 0; i < stars.length; i++) {
+      var star = stars[i];
+      star.z++;
+      var angel = Math.atan((star.startY - centerY) / (star.startX - centerX));
+      if (star.startY >= centerY && star.startX <= centerX) {
+        angel = angel + Math.PI;
+      }
+      if (star.startY <= centerY && star.startX <= centerX) {
+        angel = angel + Math.PI;
+      }
+      if (star.endX > W || star.endX < 0) {
+        star.z = 0;
+        star.endX = star.startX;
+      } else {
+        star.endX = star.startX + star.z * Math.cos(angel);
+      }
+      if (star.endY > H || star.endY < 0) {
+        star.z = 0;
+        star.endY = star.startY;
+      } else {
+        star.endY = star.startY + star.z * Math.sin(angel);
+      }
+
+
+      circleStar(star);
+      lineStar(star.startX, star.startY, star.endX, star.endY);
+    }
+    window.requestAnimationFrame(starAnimation)
+  }; //开始动画
+  starAnimation();
+  function gradient(x, y, r, colors) {
+    var g1 = cxt.createRadialGradient(x, y, 0, x, y, r);
+    g1.addColorStop(0.1, 'transparent');
+    g1.addColorStop(0.5, 'rgb(1,33,115)');
+    g1.addColorStop(0.6, 'rgb(9,33,103)');
+    g1.addColorStop(1, 'rgb(5,21,80)');
+    cxt.fillStyle = g1;
+    cxt.beginPath();
+    cxt.arc(x, y, r, 0, Math.PI * 2, false);
+    cxt.closePath();
+    cxt.fillRect(0, 0, W, H);
+  }
+  function circleStar(star) {
+    //保存当前环境的状态。
+    cxt.save();
+    cxt.beginPath();
+    //设置或返回用于填充绘画的颜色、渐变或模式。
+    cxt.fillStyle = '#5970a5';
+    //创建弧/曲线（用于创建圆形或部分圆）。
+    cxt.arc(star.endX, star.endY, star.r, 0, 2 * Math.PI);
+    //填充当前绘图（路径）。
+    cxt.fill();
+    cxt.closePath();
+    //返回之前保存过的路径状态和属性。
+    cxt.restore();
+  }// 画点
+  function lineStar(x1, y1, x2, y2) {
+    cxt.save();
+    cxt.beginPath();
+    cxt.strokeStyle = '#0f1d56';
+    cxt.lineWidth = 1;
+    cxt.moveTo(x1, y1);
+    cxt.lineTo(x2, y2);
+    cxt.stroke();
+    cxt.restore();
+  }; //画线
+</script>
+
+
+</html>
